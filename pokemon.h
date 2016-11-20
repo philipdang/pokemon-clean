@@ -1,6 +1,7 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
+#include <fstream>
 #include <string>
 #include <cmath>
 #include <list>
@@ -9,11 +10,27 @@ enum class element {
     fire = 0, water = 1, grass = 2, normal = 3, dragon = 4
 };
 
+struct PokeEntry {
+	int number;
+	char name[20];
+	char type[10];
+	char description[200];
+	PokeEntry(int n) {
+		std::ifstream entryFile(std::to_string(n) + ".txt");
+		entryFile >> number;
+		entryFile >> name;
+		entryFile >> type;
+		entryFile.seekg(1, std::ios::cur);
+		entryFile.getline(description, 199);
+		entryFile.close();
+	};
+};
 
 class Pokemon {
 private:
 	std::string name;
 	int level = 1;
+public: PokeEntry *entry;
 protected:
 	int maxHP = 20;
 	int currentHP = maxHP;
@@ -25,7 +42,10 @@ protected:
 	std::list<element> weaknesses;
 
 public:
-	Pokemon(int i) {}
+	Pokemon(int i) {
+		entry = new PokeEntry(i);
+	}
+
 	~Pokemon() {}
 	std::string get_name() {
 		return name;
